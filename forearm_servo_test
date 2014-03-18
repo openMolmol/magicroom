@@ -1,0 +1,59 @@
+// muscle sensor V3 kit with an arduino mega
+// 3 sensors on forearm
+// sensor on arduino A0 pin, servo on arduino D9 pin
+// molmol 3/18/2014
+
+#include <Servo.h> 
+
+const int analogInPin = A0; 
+const int ledPin = 13;    
+const int threshold = 0;  
+
+Servo doorServo;  //
+unsigned long startTime;
+
+int sensorValue = 0;      
+int outputValue = 0;        
+int ledState = LOW;  
+
+void setup() {
+  // initialize serial communications at 9600 bps:
+  Serial.begin(9600);
+ 
+  doorServo.attach(9); 
+  startTime = -1000000;    // don't start at start. 
+  pinMode(ledPin, OUTPUT);  
+}
+
+
+void loop() {
+  unsigned long elapsedTime = millis() - startTime;  
+
+  sensorValue = analogRead(analogInPin);            
+  
+  if (sensorValue >= threshold) {    
+    ledState = !ledState;
+    digitalWrite(ledPin,ledState);
+  outputValue = map(sensorValue, 0, 600, 0, 180); 
+ // the highest sensor reading is < 600 
+  doorServo.write(outputValue);           
+
+  // print the results to the serial monitor:
+  Serial.print("sensor = " );                       
+  Serial.print(sensorValue);      
+  Serial.print("\t output = ");      
+  Serial.println(outputValue);   
+
+  delay(2);                     
+} else {
+      doorServo.write(0);
+ }
+        delay(2);  
+  }
+
+
+
+
+
+
+
